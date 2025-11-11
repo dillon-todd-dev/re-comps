@@ -1,10 +1,19 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { DrizzleModule } from 'src/drizzle/drizzle.module';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from 'src/users/users.module';
+import { AuthModule } from 'src/auth/auth.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    DrizzleModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    UsersModule,
+    AuthModule,
+    EmailModule,
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

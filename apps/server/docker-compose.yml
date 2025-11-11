@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:17.5
+    container_name: re-comps-db
+    environment:
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=devpassword
+      - POSTGRES_DB=re-comps
+    ports:
+      - '5432:5432'
