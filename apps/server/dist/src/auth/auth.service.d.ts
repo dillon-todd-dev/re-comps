@@ -9,6 +9,7 @@ export declare class AuthService {
     private usersService;
     private jwtService;
     private emailService;
+    private readonly logger;
     constructor(db: DrizzleDB, usersService: UsersService, jwtService: JwtService, emailService: EmailService);
     validateUser(email: string, password: string): Promise<UserDto | null>;
     generateToken(user: UserDto): string;
@@ -38,9 +39,9 @@ export declare class AuthService {
         };
     }>;
     seed(): Promise<{
+        password: string | null;
         id: string;
         email: string;
-        password: string | null;
         hasSetPassword: boolean;
         firstName: string;
         lastName: string;

@@ -33,9 +33,9 @@ export declare class AuthController {
         };
     }>;
     seed(): Promise<{
+        password: string | null;
         id: string;
         email: string;
-        password: string | null;
         hasSetPassword: boolean;
         firstName: string;
         lastName: string;

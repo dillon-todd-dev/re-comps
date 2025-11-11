@@ -6,7 +6,9 @@ declare const LocalStrategy_base: new (...args: [] | [options: import("passport-
 };
 export declare class LocalStrategy extends LocalStrategy_base {
     private authService;
+    private readonly logger;
     constructor(authService: AuthService);
+    SERVICE: string;
     validate(email: string, password: string): Promise<UserDto>;
 }
 export {};

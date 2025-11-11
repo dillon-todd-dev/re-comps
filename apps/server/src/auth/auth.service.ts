@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -19,6 +20,10 @@ import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger: Logger = new Logger(AuthService.name, {
+    timestamp: true,
+  });
+
   constructor(
     @Inject(DrizzleAsyncProvider) private db: DrizzleDB,
     private usersService: UsersService,
@@ -27,6 +32,8 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<UserDto | null> {
+    this.logger.log(`Validating user: ${email}`);
+
     const user = await this.usersService.findByEmail(email);
     if (!user || !user.password) {
       return null;
@@ -47,6 +54,8 @@ export class AuthService {
   }
 
   generateToken(user: UserDto) {
+    this.logger.log(`Generating token: ${user.id}`);
+
     const payload = {
       sub: user.id,
       email: user.email,

@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var AuthService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
@@ -24,11 +25,14 @@ const drizzle_provider_1 = require("../drizzle/drizzle.provider");
 const schema_1 = require("../drizzle/schema");
 const users_service_1 = require("../users/users.service");
 const email_service_1 = require("../email/email.service");
-let AuthService = class AuthService {
+let AuthService = AuthService_1 = class AuthService {
     db;
     usersService;
     jwtService;
     emailService;
+    logger = new common_1.Logger(AuthService_1.name, {
+        timestamp: true,
+    });
     constructor(db, usersService, jwtService, emailService) {
         this.db = db;
         this.usersService = usersService;
@@ -36,6 +40,7 @@ let AuthService = class AuthService {
         this.emailService = emailService;
     }
     async validateUser(email, password) {
+        this.logger.log(`Validating user: ${email}`);
         const user = await this.usersService.findByEmail(email);
         if (!user || !user.password) {
             return null;
@@ -51,6 +56,7 @@ let AuthService = class AuthService {
         return result;
     }
     generateToken(user) {
+        this.logger.log(`Generating token: ${user.id}`);
         const payload = {
             sub: user.id,
             email: user.email,
@@ -157,7 +163,7 @@ let AuthService = class AuthService {
     }
 };
 exports.AuthService = AuthService;
-exports.AuthService = AuthService = __decorate([
+exports.AuthService = AuthService = AuthService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(drizzle_provider_1.DrizzleAsyncProvider)),
     __metadata("design:paramtypes", [Object, users_service_1.UsersService,
