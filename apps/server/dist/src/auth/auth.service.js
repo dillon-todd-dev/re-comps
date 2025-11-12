@@ -111,6 +111,9 @@ let AuthService = AuthService_1 = class AuthService {
             },
         };
     }
+    async getInvitation(getInvitationDto) {
+        return this.usersService.getInvitation(getInvitationDto.token);
+    }
     async setPassword(token, password) {
         let payload;
         try {

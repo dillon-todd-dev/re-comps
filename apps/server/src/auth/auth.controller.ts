@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
+  Logger,
   Post,
   Res,
   UseGuards,
@@ -17,9 +19,14 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { InviteUserDto } from 'src/auth/dto/invite-user.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decarator';
+import { GetInvitationDto } from './dto/get-invitation.dto';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger: Logger = new Logger(AuthController.name, {
+    timestamp: true,
+  });
+
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
@@ -56,7 +63,17 @@ export class AuthController {
   @Post('invite')
   @HttpCode(HttpStatus.CREATED)
   async invite(@Body() inviteUserDto: InviteUserDto) {
-    return this.authService.inviteUser(inviteUserDto);
+    const invitation = await this.authService.inviteUser(inviteUserDto);
+    if (!invitation) {
+      return { error: 'Invitation not found' };
+    }
+    return { invitation };
+  }
+
+  @Get('invitation')
+  @HttpCode(HttpStatus.OK)
+  async getInvitation(@Body() getInvitationDto: GetInvitationDto) {
+    return this.authService.getInvitation(getInvitationDto);
   }
 
   @Post('set-password')
@@ -80,6 +97,13 @@ export class AuthController {
       message: result.message,
       user: result.user,
     };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async currentUser(@CurrentUser() user: UserDto) {
+    this.logger.log(`Getting current user: ${user?.email}`);
+    return { user };
   }
 
   @Post('seed')

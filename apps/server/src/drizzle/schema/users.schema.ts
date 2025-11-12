@@ -47,3 +47,6 @@ export type User = typeof usersTable.$inferSelect;
 export type NewUser = typeof usersTable.$inferInsert;
 export type UserInvitation = typeof userInvitationsTable.$inferSelect;
 export type NewUserInvitation = typeof userInvitationsTable.$inferInsert;
+export type InvitationWithUser = Omit<UserInvitation, 'userId'> & {
+  user: User;
+};

@@ -12,11 +12,12 @@ import {
   DrizzleAsyncProvider,
   type DrizzleDB,
 } from 'src/drizzle/drizzle.provider';
-import { usersTable } from 'src/drizzle/schema';
+import { InvitationWithUser, usersTable } from 'src/drizzle/schema';
 import { UsersService } from 'src/users/users.service';
 import { UserDto } from 'src/users/dto/user.dto';
 import { InviteUserDto } from 'src/auth/dto/invite-user.dto';
 import { EmailService } from 'src/email/email.service';
+import { GetInvitationDto } from './dto/get-invitation.dto';
 
 @Injectable()
 export class AuthService {
@@ -124,6 +125,12 @@ export class AuthService {
         role: user.role,
       },
     };
+  }
+
+  async getInvitation(
+    getInvitationDto: GetInvitationDto,
+  ): Promise<InvitationWithUser | null> {
+    return this.usersService.getInvitation(getInvitationDto.token);
   }
 
   async setPassword(token: string, password: string) {

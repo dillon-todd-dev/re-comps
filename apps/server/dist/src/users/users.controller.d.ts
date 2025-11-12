@@ -4,9 +4,9 @@ export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
     findAll(): Promise<{
-        password: string | null;
         id: string;
         email: string;
+        password: string | null;
         hasSetPassword: boolean;
         firstName: string;
         lastName: string;
@@ -16,9 +16,9 @@ export declare class UsersController {
         updatedAt: Date;
     }[]>;
     findById(id: string): Promise<{
-        password: string | null;
         id: string;
         email: string;
+        password: string | null;
         hasSetPassword: boolean;
         firstName: string;
         lastName: string;
@@ -28,9 +28,9 @@ export declare class UsersController {
         updatedAt: Date;
     } | null>;
     create(newUser: NewUser): Promise<{
-        password: string | null;
         id: string;
         email: string;
+        password: string | null;
         hasSetPassword: boolean;
         firstName: string;
         lastName: string;

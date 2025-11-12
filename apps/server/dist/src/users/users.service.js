@@ -43,6 +43,18 @@ let UsersService = class UsersService {
         const [user] = await this.db.insert(schema_1.usersTable).values(newUser).returning();
         return user;
     }
+    async getInvitation(token) {
+        const [result] = await this.db
+            .select()
+            .from(schema_1.userInvitationsTable)
+            .innerJoin(schema_1.usersTable, (0, drizzle_orm_1.eq)(schema_1.userInvitationsTable.userId, schema_1.usersTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.userInvitationsTable.token, token), (0, drizzle_orm_1.eq)(schema_1.userInvitationsTable.used, false), (0, drizzle_orm_1.gt)(schema_1.userInvitationsTable.expiresAt, new Date())));
+        if (!result) {
+            return null;
+        }
+        const { userId, ...invitation } = result.user_invitations;
+        return { ...invitation, user: result.users };
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

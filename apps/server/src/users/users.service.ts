@@ -3,8 +3,15 @@ import {
   DrizzleAsyncProvider,
   type DrizzleDB,
 } from 'src/drizzle/drizzle.provider';
-import { NewUser, User, usersTable } from 'src/drizzle/schema';
-import { eq } from 'drizzle-orm';
+import {
+  InvitationWithUser,
+  NewUser,
+  User,
+  UserInvitation,
+  userInvitationsTable,
+  usersTable,
+} from 'src/drizzle/schema';
+import { and, eq, gt } from 'drizzle-orm';
 
 @Injectable()
 export class UsersService {
@@ -33,5 +40,27 @@ export class UsersService {
   async create(newUser: NewUser): Promise<User> {
     const [user] = await this.db.insert(usersTable).values(newUser).returning();
     return user;
+  }
+
+  async getInvitation(token: string): Promise<InvitationWithUser | null> {
+    const [result] = await this.db
+      .select()
+      .from(userInvitationsTable)
+      .innerJoin(usersTable, eq(userInvitationsTable.userId, usersTable.id))
+      .where(
+        and(
+          eq(userInvitationsTable.token, token),
+          eq(userInvitationsTable.used, false),
+          gt(userInvitationsTable.expiresAt, new Date()),
+        ),
+      );
+
+    if (!result) {
+      return null;
+    }
+
+    const { userId, ...invitation } = result.user_invitations;
+
+    return { ...invitation, user: result.users };
   }
 }

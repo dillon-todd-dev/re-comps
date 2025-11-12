@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var AuthController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
@@ -23,8 +24,12 @@ const jwt_auth_guard_1 = require("./guards/jwt-auth.guard");
 const invite_user_dto_1 = require("./dto/invite-user.dto");
 const roles_guard_1 = require("./guards/roles.guard");
 const roles_decarator_1 = require("./decorators/roles.decarator");
-let AuthController = class AuthController {
+const get_invitation_dto_1 = require("./dto/get-invitation.dto");
+let AuthController = AuthController_1 = class AuthController {
     authService;
+    logger = new common_1.Logger(AuthController_1.name, {
+        timestamp: true,
+    });
     constructor(authService) {
         this.authService = authService;
     }
@@ -45,7 +50,14 @@ let AuthController = class AuthController {
         return { message: 'Logged out successfully' };
     }
     async invite(inviteUserDto) {
-        return this.authService.inviteUser(inviteUserDto);
+        const invitation = await this.authService.inviteUser(inviteUserDto);
+        if (!invitation) {
+            return { error: 'Invitation not found' };
+        }
+        return { invitation };
+    }
+    async getInvitation(getInvitationDto) {
+        return this.authService.getInvitation(getInvitationDto);
     }
     async setPassword(setPasswordDto, res) {
         const result = await this.authService.setPassword(setPasswordDto.token, setPasswordDto.password);
@@ -59,6 +71,10 @@ let AuthController = class AuthController {
             message: result.message,
             user: result.user,
         };
+    }
+    async currentUser(user) {
+        this.logger.log(`Getting current user: ${user?.email}`);
+        return { user };
     }
     async seed() {
         return this.authService.seed();
@@ -95,6 +111,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "invite", null);
 __decorate([
+    (0, common_1.Get)('invitation'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [get_invitation_dto_1.GetInvitationDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "getInvitation", null);
+__decorate([
     (0, common_1.Post)('set-password'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)({ passthrough: true })),
@@ -103,12 +127,20 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "setPassword", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me'),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_dto_1.UserDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "currentUser", null);
+__decorate([
     (0, common_1.Post)('seed'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "seed", null);
-exports.AuthController = AuthController = __decorate([
+exports.AuthController = AuthController = AuthController_1 = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);
