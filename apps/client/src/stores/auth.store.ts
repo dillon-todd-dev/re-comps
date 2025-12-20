@@ -3,7 +3,7 @@ import api from '../lib/api';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null,
+    user: null as { email: string } | null,
     isAuthenticated: false,
     loading: true,
   }),

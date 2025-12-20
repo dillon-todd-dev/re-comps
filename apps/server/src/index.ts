@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import pinoHttp from 'pino-http';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import { env } from '@src/config/env';
 import log from '@src/logger';
 import apiRoutes from '@src/routes';
@@ -13,6 +14,12 @@ server.use(pinoHttp({ logger: log.child({ name: 'http' }) }));
 server.use(express.json());
 
 server.use(cookieParser());
+
+server.use(
+  cors({
+    origin: env.FRONTEND_URL,
+  }),
+);
 
 server.get('/health', (req: Request, res: Response) => {
   res.sendStatus(200);
