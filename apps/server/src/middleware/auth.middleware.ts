@@ -3,6 +3,7 @@ import * as jwtService from '@src/services/jwt.service';
 import { db } from '@src/db';
 import { usersTable } from '@src/db/schema';
 import { eq } from 'drizzle-orm';
+import { UserRole } from '@src/types/user.types';
 
 export async function requireAuth(
   req: Request,
@@ -31,4 +32,13 @@ export async function requireAuth(
   } catch (error) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
+}
+
+export function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  if (req.user?.role !== UserRole.ADMIN) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+
+  next();
 }
