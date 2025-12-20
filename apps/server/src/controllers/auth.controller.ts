@@ -45,3 +45,7 @@ export function logout(req: Request, res: Response) {
   res.clearCookie('auth');
   res.status(204);
 }
+
+export function getCurrentUser(req: Request, res: Response) {
+  res.json({ user: req.user });
+}
